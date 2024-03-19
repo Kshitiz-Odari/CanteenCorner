@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block myblock %}
+
+<form method="POST" action="{% url 'delete' booking.id %}">
+  {% csrf_token %}
+  <h1>Are you sure to delete this {{booking.name}}</h1>
+  <button type = "submit" href="{% url 'delete' booking.id %}" class="btn btn-primary">Delete</button>
+  <a href="{% url 'staff_page' %}" class="btn btn-primary">Cancel</a>
+</form>
+{% endblock %}

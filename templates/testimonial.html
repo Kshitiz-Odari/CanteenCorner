@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% block myblock %}
+<div class="container-xxl py-5 bg-dark hero-header mb-5">
+    <div class="container text-center my-5 pt-5 pb-4">
+        <h1 class="display-3 text-white mb-3 animated slideInDown">Testimonial</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center text-uppercase">
+                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                <li class="breadcrumb-item text-white active" aria-current="page">Testimonial</li>
+            </ol>
+        </nav>
+    </div>
+</div>
+
+        <form method="post" action="{% url 'testimonial' %}"enctype = "multipart/form-data">
+            {% csrf_token %}
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <div class="form-floating">
+                                            <input type="text" class="form-control" id="name" placeholder="Your Name" name = "name" required>
+                                            <label for="name">Name</label>
+                                        </div>
+                                    </div>
+                                        <div class="form-floating">
+                                            <textarea class="form-control" placeholder="Leave a message here" id="message" style="height: 150px" name="message" required></textarea>
+                                            <label for="message">Message</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12">
+                                        <button class="btn btn-primary w-100 py-3" type="submit">Send Message</button>
+                                    </div>
+                                </div>
+                            </form>
+        <!-- Testimonial Start -->
+        <div class="container-xxl pt-5 pb-3">
+            <div class="container">
+                <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+                    <h5 class="section-title ff-secondary text-center text-primary fw-normal">Testimonial</h5>
+                </div>
+
+                <div class="row g-4">
+                            {% for a in as %}
+                    <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+                        <div class="team-item text-center rounded overflow-hidden">
+                            <div class="rounded-circle overflow-hidden m-4">
+                                <img class="img-fluid" src="img/team-1.jpg" alt="">
+                            </div>
+                            <h5 class="mb-0">{{ a.name }}</h5>
+                            <small>{{ a.message }}</small>
+                            <div class="d-flex justify-content-center mt-3">
+                                    <div class="col-12">
+                                        <a href="#" class="btn btn-primary py-2 px-4">READ MORE</a>
+                                    </div>
+                            </div>
+                        </div>
+                    </div>
+                     {% endfor %}
+                </div>
+            </div>
+        </div>
+        <!-- Testimonial End -->
+        
+{% endblock %}

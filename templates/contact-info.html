@@ -1,0 +1,36 @@
+{% block myblock1 %}
+
+<!-- Contact Start -->
+<div class="container-xxl pt-5 pb-3">
+  <div class="container">
+    <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+      <h5 class="section-title ff-secondary text-center text-primary fw-normal">
+        Queries
+      </h5>
+    </div>
+
+    <div class="row g-4">
+      {% for contact in contacts %}
+      <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+        <div class="team-item text-center rounded overflow-hidden">
+          <h5 class="mb-0">Name = {{ contact.name }}</h5>
+          <h5 class="mb-0">Email = {{ contact.email }}</h5>
+          <h5 class="mb-0">Subject = {{ contact.subject }}</h5>
+          <h5 class="mb-0">Message = {{ contact.message }}</h5>
+          <div class="d-flex justify-content-center mt-3">
+            <div class="col-12">
+              <a
+                href="{% url 'delete_contact' contact.id %}"
+                class="btn btn-danger"
+                >Delete</a
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+<!-- Contact End -->
+{% endblock %}

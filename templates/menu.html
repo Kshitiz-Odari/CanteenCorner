@@ -1,0 +1,170 @@
+{% extends 'base.html' %} {% load static %} {% block myblock %}
+
+<div class="container-xxl py-5 bg-dark hero-header mb-5">
+  <div class="container text-center my-5 pt-5 pb-4">
+    <h1 class="display-3 text-white mb-3 animated slideInDown">Menu</h1>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb justify-content-center text-uppercase">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item text-white active" aria-current="page">
+          Menu
+        </li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<!-- Menu Start -->
+<div class="container-xxl py-5">
+  <div class="container">
+    <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+      <h5 class="section-title ff-secondary text-center text-primary fw-normal">
+        Food Menu
+      </h5>
+      <h1 class="mb-5">Items in Pantry</h1>
+    </div>
+    <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.1s">
+      <div class="tab-content">
+        <div id="tab-1" class="tab-pane fade show p-0 active">
+          <div class="row g-4">
+            {% for item in items %}
+            <div class="col-lg-6">
+              <div class="d-flex align-items-center">
+                {% if item.image %}
+                <img
+                  class="flex-shrink-0 img-fluid rounded"
+                  src="{{ item.image.url }}"
+                  alt=""
+                  style="width: 80px"
+                />
+                {% endif %}
+                <div class="w-100 d-flex flex-column text-start ps-4">
+                  <h5 class="d-flex justify-content-between border-bottom pb-2">
+                    <span>{{ item.name }}</span>
+                    <span class="text-primary"
+                      >Rs.{{ item.price|floatformat:2 }}</span
+                    >
+                  </h5>
+                  <button
+                    data-product="{{ item.id }}"
+                    data-action="add"
+                    class="btn btn-outline-secondary add-btn update-cart"
+                  >
+                    Place an order
+                  </button>
+                </div>
+              </div>
+              <form action="{% url 'submit_review' item.id %}" method="POST">
+                {% csrf_token %}
+                <div>
+                  <br />
+                  <div class="rate">
+                    <!-- Unique IDs for each item's rating -->
+                    <input
+                      type="radio"
+                      name="rating"
+                      id="rating{{ item.id }}_10"
+                      value="5"
+                      required
+                    /><label for="rating{{ item.id }}_10" title="5"></label>
+                    <input
+                      type="radio"
+                      name="rating"
+                      id="rating{{ item.id }}_9"
+                      value="4.5"
+                      required
+                    /><label
+                      for="rating{{ item.id }}_9"
+                      title="4.5"
+                      class="half"
+                    ></label>
+                    <input
+                      type="radio"
+                      name="rating"
+                      id="rating{{ item.id }}_8"
+                      value="4"
+                      required
+                    /><label for="rating{{ item.id }}_8" title="4"></label>
+                    <input
+                      type="radio"
+                      name="rating"
+                      id="rating{{ item.id }}_7"
+                      value="3.5"
+                      required
+                    /><label
+                      for="rating{{ item.id }}_7"
+                      title="3.5"
+                      class="half"
+                    ></label>
+                    <input
+                      type="radio"
+                      name="rating"
+                      id="rating{{ item.id }}_6"
+                      value="3"
+                      required
+                    /><label for="rating{{ item.id }}_6" title="3"></label>
+                    <input
+                      type="radio"
+                      name="rating"
+                      id="rating{{ item.id }}_5"
+                      value="2.5"
+                      required
+                    /><label
+                      for="rating{{ item.id }}_5"
+                      title="2.5"
+                      class="half"
+                    ></label>
+                    <input
+                      type="radio"
+                      name="rating"
+                      id="rating{{ item.id }}_4"
+                      value="2"
+                      required
+                    /><label for="rating{{ item.id }}_4" title="2"></label>
+                    <input
+                      type="radio"
+                      name="rating"
+                      id="rating{{ item.id }}_3"
+                      value="1.5"
+                      required
+                    /><label
+                      for="rating{{ item.id }}_3"
+                      title="1.5"
+                      class="half"
+                    ></label>
+                    <input
+                      type="radio"
+                      name="rating"
+                      id="rating{{ item.id }}_2"
+                      value="1"
+                      required
+                    /><label for="rating{{ item.id }}_2" title="1"></label>
+                    <input
+                      type="radio"
+                      name="rating"
+                      id="rating{{ item.id }}_71"
+                      value="0.5"
+                      required
+                    /><label
+                      for="rating{{ item.id }}_1"
+                      title="0.5"
+                      class="half"
+                    ></label>
+                  </div>
+                  <input
+                    type="submit"
+                    value="Submit Rating"
+                    class="btn btn-primary"
+                  />
+                </div>
+              </form>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Menu End -->
+{% endblock %}

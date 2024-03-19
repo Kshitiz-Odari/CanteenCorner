@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block myblock %}
+
+<form method="POST" action="{% url 'delete_contact' contact.id %}">
+  {% csrf_token %}
+  <h1>Are you sure to delete this {{contact.name}}</h1>
+  <button type = "submit" href="{% url 'delete_contact' contact.id %}" class="btn btn-primary">Delete</button>
+  <a href="{% url 'staff_page' %}" class="btn btn-primary">Cancel</a>
+</form>
+{% endblock %}

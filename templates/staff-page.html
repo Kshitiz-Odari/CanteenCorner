@@ -1,0 +1,126 @@
+{% extends 'base.html' %} {% block myblock %}
+
+<div class="container-xxl py-5 bg-dark hero-header mb-5">
+  <div class="container text-center my-5 pt-5 pb-4">
+    <h1 class="display-3 text-white mb-3 animated slideInDown">Staff Page</h1>
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb justify-content-center text-uppercase">
+        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item text-white active" aria-current="page">
+          Staff
+        </li>
+      </ol>
+    </nav>
+  </div>
+</div>
+
+<div class="container text-center">
+  <div class="row">
+    <div class="col-sm-4">
+      <div class="list-group">
+        <a
+          href="#"
+          class="list-group-item list-group-item-action active"
+          aria-current="true"
+        >
+          Dashboard
+        </a>
+        <a
+          href="#Booked_Information"
+          class="list-group-item list-group-item-action"
+          >Booked Information</a
+        >
+        <a
+          href="#Contact_Information"
+          class="list-group-item list-group-item-action"
+          >Contact</a
+        >
+      </div>
+    </div>
+    <div class="col-sm-8">
+      <!-- Testimonial Start -->
+      <div id="Booked_Information" class="container-xxl pt-5 pb-3">
+        <div class="container">
+          <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h5
+              class="section-title ff-secondary text-center text-primary fw-normal"
+            >
+              Booked Information
+            </h5>
+          </div>
+
+          <div class="row g-1">
+            {% for booking_info in booking_infos %}
+            <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+              <div class="team-item text-center rounded overflow-hidden">
+                <h5 class="mb-0">Name = {{ booking_info.name }}</h5>
+                <h5 class="mb-0">Email = {{ booking_info.email }}</h5>
+                <h5 class="mb-0">Date time = {{ booking_info.datetime }}</h5>
+                <h5 class="mb-0">
+                  No of people = {{ booking_info.no_of_people }}
+                </h5>
+                <h5 class="mb-0">
+                  Special request = {{ booking_info.special_request }}
+                </h5>
+                <div class="d-flex justify-content-center mt-3">
+                  <div class="col-12">
+                    <a
+                      href="{% url 'delete' booking_info.id %}"
+                      class="btn btn-danger"
+                      >Delete</a
+                    >
+                    <a href="{% url 'send_email'%}" class="btn btn-danger"
+                      >Send Mail</a
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <!-- Testimonial End -->
+      <!-- Contact Start -->
+      <div id="Contact_Information" class="container-xxl pt-5 pb-3">
+        <div class="container">
+          <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+            <h5
+              class="section-title ff-secondary text-center text-primary fw-normal"
+            >
+              Contact
+            </h5>
+          </div>
+
+          <div class="row g-4">
+            {% for contact in contacts %}
+            <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+              <div class="team-item text-center rounded overflow-hidden">
+                <h5 class="mb-0">Name = {{ contact.name }}</h5>
+                <h5 class="mb-0">Email = {{ contact.email }}</h5>
+                <h5 class="mb-0">Subject = {{ contact.subject }}</h5>
+                <h5 class="mb-0">Message = {{ contact.message }}</h5>
+                <div class="d-flex justify-content-center mt-3">
+                  <div class="col-12">
+                    <a
+                      href="{% url 'delete_contact' contact.id %}"
+                      class="btn btn-danger"
+                      >Delete</a
+                    >
+                    <a href="{% url 'send_email'%}" class="btn btn-danger"
+                      >Send Mail</a
+                    >
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <!-- Contact End -->
+    </div>
+  </div>
+</div>
+
+{% endblock %}
