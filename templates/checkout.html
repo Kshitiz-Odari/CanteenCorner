@@ -155,7 +155,7 @@
     var shipping = "{{ order.shipping }}";
     var total = "{{ order.get_cart_total }}";
 
-    if (user != "AnonymousUser") {
+    if (user != "Guest") {
       document.getElementById("user-info").innerHTML = "";
     }
 
@@ -195,7 +195,7 @@
         shippingInfo.zipcode = form.zipcode.value;
       }
 
-      if (user === "AnonymousUser") {
+      if (user === "Guest") {
         shippingInfo.name = form.address.name;
         shippingInfo.email = form.address.email;
       }

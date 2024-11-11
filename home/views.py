@@ -1,6 +1,9 @@
 from pyexpat.errors import messages
 from django.contrib import messages
 from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.core.exceptions import ObjectDoesNotExist
+import json
 from .models import YourItemModel
 from .utils import user_based_collaborative_filtering
 from .form import ReviewForm
@@ -12,14 +15,28 @@ from django.http import JsonResponse
 import json
 import datetime
 
-# Create your views here.
+# Create views here.
 def your_view(request):
-    # Your existing logic to fetch items from the database
     items = YourItemModel.objects.all()
-    # Assuming you have a variable for currency symbol
-    currency_symbol = "Rs"  # Or retrieve it from your settings or database
+    currency_symbol = "Rs"
     return render(request, 'index.html', {'items': items, 'currency_symbol': currency_symbol})
 
+def home(request):
+    return render(request, 'index.html')
+
+
+def search_items(request):
+    query = request.GET.get('q')
+    results = []
+
+    if query:
+        results = Items.objects.filter(name__icontains=query)
+
+    context = {
+        'results': results,
+        'query': query,
+    }
+    return render(request, 'search_results.html', context)
 
 def index(request):
     if 'q' in request.GET:
@@ -37,7 +54,7 @@ def index(request):
 def about(request):
     return render(request, template_name="about.html")
 
-
+@login_required(login_url='login')
 def booking(request):
     if request.method == "POST":
         name = request.POST.get("name")
@@ -62,7 +79,7 @@ def staff_page(request):
                 }
     return render(request, "staff-page.html", context)
 
-
+@login_required(login_url='login')
 def recommend_items(request):
     recommendations = user_based_collaborative_filtering(request.user)
     context = {"recommendations": recommendations}
@@ -115,7 +132,7 @@ def contact(request):
     context = {"title": "contact"}
     return render(request, "contact.html", context)
 
-
+@login_required(login_url='login')
 def delete(request, id):
 
     try:
@@ -130,7 +147,7 @@ def delete(request, id):
         return redirect('staff_page')
     return render(request, "delete.html", context)
 
-
+@login_required(login_url='login')
 def delete_contact(request, id):
 
     try:
@@ -145,79 +162,81 @@ def delete_contact(request, id):
         return redirect('staff_page')
     return render(request, "delete-contact.html", context)
 
+@login_required(login_url='login')
+def get_cart_items_from_cookie(request):
+    try:
+        c = json.loads(request.COOKIES.get('cart', '{}'))
+    except json.JSONDecodeError:
+        c = {}
 
+    order = {"get_cart_items": 0, "get_cart_total": 0}
+    cart_items = 0
+    items = []
+
+    for product_id, product_data in c.items():
+        try:
+            product = Items.objects.get(id=product_id)
+        except Items.DoesNotExist:
+            continue  # Skip the item if it's not found in the database
+
+        quantity = product_data.get('quantity', 0)
+        total = product.price * quantity
+
+        cart_items += quantity
+        order["get_cart_total"] += total
+        order["get_cart_items"] += quantity
+
+        item = {
+            "product": {
+                "id": product.id,
+                "name": product.name,
+                "price": product.price,
+                "imageURL": product.image.url,
+            },
+            "quantity": quantity,
+            "get_total": total
+        }
+        items.append(item)
+
+    return items, order, cart_items
+
+@login_required(login_url='login')
 def cart(request):
     if request.user.is_authenticated:
-        customer = request.user.customer
+        try:
+            customer = request.user.customer
+        except ObjectDoesNotExist:
+            messages.error(request, "Customer account not found. Please contact support or register.")
+            return redirect('index')
+
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
         cart_items = order.get_cart_items
     else:
-        try:
-            c = json.loads(request.COOKIES['cart'])
-        except:
-            c = {}
-        order = {"get_cart_items": 0, "get_cart_total": 0}
-        cart_items = 0
-        items = []
-        for product_id in c:
-            cart_items += c[product_id]['quantity']
-            product = Items.objects.get(id=product_id)
-            total = product.price * c[product_id]['quantity']
-            order["get_cart_total"] += total
-            order["get_cart_items"] += c[product_id]['quantity']
+        items, order, cart_items = get_cart_items_from_cookie(request)
 
-            item = {
-                "product": {
-                    "id": product.id,
-                    "name": product.name,
-                    "price": product.price,
-                    "imageURL": product.image.url,
-                },
-                "quantity": c[product_id]["quantity"],
-                "get_total": total
-            }
-            items.append(item)
-    context = {"items": items, "order": order, "cart_items":cart_items}
+    context = {"items": items, "order": order, "cart_items": cart_items}
     return render(request, 'cart.html', context)
 
-
+@login_required(login_url='login')
 def checkout(request):
     if request.user.is_authenticated:
-        customer = request.user.customer
+        try:
+            customer = request.user.customer
+        except ObjectDoesNotExist:
+            messages.error(request, "Customer account not found. Please contact support or register.")
+            return redirect('some_existing_view')  # Redirect to a relevant view
+
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
         items = order.orderitem_set.all()
         cart_items = order.get_cart_items
     else:
-        try:
-            c = json.loads(request.COOKIES['cart'])
-        except:
-            c = {}
-        order = {"get_cart_items": 0, "get_cart_total": 0}
-        cart_items = 0
-        items = []
-        for product_id in c:
-            cart_items += c[product_id]['quantity']
-            product = Items.objects.get(id=product_id)
-            total = product.price * c[product_id]['quantity']
-            order["get_cart_total"] += total
-            order["get_cart_items"] += c[product_id]['quantity']
+        items, order, cart_items = get_cart_items_from_cookie(request)
 
-            item = {
-                "product": {
-                    "id": product.id,
-                    "name": product.name,
-                    "price": product.price,
-                    "image": {"url": product.image.url}
-                },
-                "quantity": c[product_id]["quantity"],
-                "get_total": total
-            }
-            items.append(item)
-    context = {"items": items, "order": order, "cart_items":cart_items}
+    context = {"items": items, "order": order, "cart_items": cart_items}
     return render(request, 'checkout.html', context)
 
-
+@login_required(login_url='login')
 def update_item(request):
     data = json.loads(request.body)
     product_id = data['productID']
@@ -240,7 +259,7 @@ def update_item(request):
     }
     return JsonResponse(response)
 
-
+@login_required(login_url='login')
 def process_order(request):
     data = json.loads(request.body)
     transaction_id = datetime.datetime.now().timestamp()
@@ -319,6 +338,7 @@ def send_email(request):
     context = {"title": "Email"}
     return render(request, "send-email.html", context)
 
+@login_required(login_url='login')
 def submit_review(request, item_id):
     url = request.META.get("HTTP_REFERER")
 

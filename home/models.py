@@ -33,11 +33,17 @@ class Staff(models.Model):
 
 
 class Items(models.Model):
+    CATEGORY_CHOICES = [
+        ('Food', 'Food'),
+        ('Drinks', 'Drinks'),
+    ]
+
     name = models.CharField(max_length=20)
     price = models.IntegerField()
     image = models.ImageField(null=True, blank=True, upload_to="images/")
     digital = models.BooleanField(default=False)
     date_added = models.DateTimeField(auto_now_add=True, null=True)
+    category = models.CharField(max_length=10, choices=CATEGORY_CHOICES, default='Food')  # New field
 
     def __str__(self):
         return f"{self.name}"
@@ -75,28 +81,33 @@ class Order(models.Model):
     transaction_id = models.CharField(max_length=100, null=True)
 
     def __str__(self):
-        return str(self.id)
+        return f"Order {self.id} by {self.customer.name if self.customer else 'Anonymous'}"
 
     @property
     def get_cart_total(self):
+        """
+        Calculates the total price for all items in the order.
+        """
         order_items = self.orderitem_set.all()
-        total = sum([item.get_total for item in order_items])
+        total = sum(item.get_total for item in order_items)
         return total
 
     @property
     def get_cart_items(self):
+        """
+        Calculates the total quantity of all items in the order.
+        """
         order_items = self.orderitem_set.all()
-        total = sum([item.quantity for item in order_items])
+        total = sum(item.quantity for item in order_items)
         return total
 
     @property
     def shipping(self):
-        shipping = False
-        orderitems = self.orderitem_set.all()
-        for i in orderitems:
-            if not i.product.digital:
-                shipping = True
-                break
+        """
+        Checks if shipping is required by looking for any non-digital products in the order.
+        """
+        order_items = self.orderitem_set.all()
+        shipping = any(not item.product.digital for item in order_items)
         return shipping
 
 

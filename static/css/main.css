@@ -34,21 +34,27 @@ h1,h2,h3,h4,h5,h6{
 }
 
 #cart-icon{
-	width:25px;
-	display: inline-block;
-	margin-left: 15px;
+	width: 20px;
+	height: auto;
 }
 
-#cart-total{
-	display: inline-block;
-	text-align: center;
-	color:#fff;
-	background-color: red;
-	width: 20px;
-	height: 25px;
-	border-radius: 50%;
-	font-size: 14px;
+
+#cart-total {
+    display: inline-block;
+    text-align: center;
+    color: #fff;
+    background-color: red;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 12px;
+    line-height: 20px;
+    position: absolute;
+    top: 5px;
+    right: -5px;
+    font-weight: bold;
 }
+
 
 .col-lg-4, .col-lg-6, .col-lg-8, .col-lg-12{
 	margin-top: 10px;
