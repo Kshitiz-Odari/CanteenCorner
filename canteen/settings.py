@@ -15,10 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
-
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-_3ci7-0=%s19+uqxz^^k=(9@_z99+nv$fctcagbnly&6=4&u1l'
 
@@ -73,7 +69,6 @@ WSGI_APPLICATION = 'canteen.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
     'default': {
@@ -84,7 +79,6 @@ DATABASES = {
 
 
 # Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -103,7 +97,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/3.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
@@ -117,7 +110,6 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
@@ -129,7 +121,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -142,8 +133,8 @@ LOGIN_URL = '/login/'
 
 # DEBUG = True
 # EMAIL_HOST = "smtp.gmail.com"
-# EMAIL_HOST_USER = "mailtonobelrai@gmail.com"
-# EMAIL_HOST_PASSWORD = "dhdgeffcwgytztwq"
+# EMAIL_HOST_USER = "artichaze007@gmail.com"
+# EMAIL_HOST_PASSWORD = "ArticHaze"
 # EMAIL_PORT = 587
 # EMAIL_USE_TLS = True
 # EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"

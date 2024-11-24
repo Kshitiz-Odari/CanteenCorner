@@ -14,7 +14,6 @@
   </div>
 </div>
 
-<!-- Menu Start -->
 <div class="container-xxl py-5">
   <div class="container">
     <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
@@ -24,7 +23,6 @@
       <h1 class="mb-5">Our Selection</h1>
     </div>
 
-    <!-- Food Section -->
     <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
       <h3 class="mb-5">Food Items</h3>
     </div>
@@ -56,13 +54,12 @@
             </button>
           </div>
         </div>
-        <!-- Rating Form for Food Items -->
+
         <form action="{% url 'submit_review' item.id %}" method="POST">
           {% csrf_token %}
           <div>
             <br />
             <div class="rate">
-              <!-- Unique IDs for each item's rating -->
               <input
                 type="radio"
                 name="rating"
@@ -165,7 +162,6 @@
       {% endif %} {% endfor %}
     </div>
 
-    <!-- Drinks Section -->
     <div class="text-center wow fadeInUp mt-5" data-wow-delay="0.1s">
       <h3 class="mb-5">Drinks</h3>
     </div>
@@ -197,13 +193,12 @@
             </button>
           </div>
         </div>
-        <!-- Rating Form for Drinks -->
+
         <form action="{% url 'submit_review' item.id %}" method="POST">
           {% csrf_token %}
           <div>
             <br />
             <div class="rate">
-              <!-- Unique IDs for each item's rating -->
               <input
                 type="radio"
                 name="rating"
@@ -307,6 +302,5 @@
     </div>
   </div>
 </div>
-<!-- Menu End -->
 
 {% endblock %}

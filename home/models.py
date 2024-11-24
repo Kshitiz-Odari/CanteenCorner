@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
-# # Create your models here.
+
 
 GENDER_CHOICES = (
     ('Male', 'Male'),
@@ -16,7 +16,6 @@ class YourItemModel(models.Model):
     name = models.CharField(max_length=100)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to='img/')
-    # Add any other fields as needed
 
 
 class Staff(models.Model):
