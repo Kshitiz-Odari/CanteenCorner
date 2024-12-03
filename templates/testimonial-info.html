@@ -1,38 +1,37 @@
 {% block myblock2 %}
 
 <div class="container-xxl pt-5 pb-3">
-  <div class="container">
+<div class="container">
     <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-      <h5 class="section-title ff-secondary text-center text-primary fw-normal">
+    <h5 class="section-title ff-secondary text-center text-primary fw-normal">
         Booked Information
-      </h5>
+    </h5>
     </div>
 
     <div class="row g-4">
-      {% for booking_info in booking_infos %}
-      <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+    {% for booking_info in booking_infos %}
+    <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
         <div class="team-item text-center rounded overflow-hidden">
-          <h5 class="mb-0">Name = {{ booking_info.name }}</h5>
-          <h5 class="mb-0">Email = {{ booking_info.email }}</h5>
-          <h5 class="mb-0">Date time = {{ booking_info.datetime }}</h5>
-          <h5 class="mb-0">No of people = {{ booking_info.no_of_people }}</h5>
-          <h5 class="mb-0">
+        <h5 class="mb-0">Name = {{ booking_info.name }}</h5>
+        <h5 class="mb-0">Email = {{ booking_info.email }}</h5>
+        <h5 class="mb-0">Date time = {{ booking_info.datetime }}</h5>
+        <h5 class="mb-0">No of people = {{ booking_info.no_of_people }}</h5>
+        <h5 class="mb-0">
             Special request = {{ booking_info.special_request }}
-          </h5>
-          <div class="d-flex justify-content-center mt-3">
+        </h5>
+        <div class="d-flex justify-content-center mt-3">
             <div class="col-12">
-              <a
+            <a
                 href="{% url 'delete' booking_info.id %}"
                 class="btn btn-danger"
                 >Delete</a
-              >
+            >
             </div>
-          </div>
         </div>
-      </div>
-      {% endfor %}
+        </div>
     </div>
-  </div>
+    {% endfor %}
+    </div>
 </div>
-<!-- Testimonial End -->
+</div>
 {% endblock %}
