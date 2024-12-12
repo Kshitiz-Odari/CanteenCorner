@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from .forms import CreateUserForm
+from home.models import Customer
 
 def login_user(request):
     if request.user.is_authenticated:
@@ -23,9 +24,15 @@ def register_user(request):
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
         if form.is_valid():
-            form.save()
-            user = form.cleaned_data.get('username')
-            messages.success(request, f"{user} created successfully!")
+            user = form.save()
+            Customer.objects.create(
+                user=user,
+                name=form.cleaned_data.get('username'),
+                address='',
+                email=user.email,
+                phone_number=''
+            )
+            messages.success(request, f"{user.username} created successfully!")
             return redirect('login')
         else:
             for error in form.errors.values():

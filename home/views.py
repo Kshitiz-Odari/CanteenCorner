@@ -1,18 +1,16 @@
 from pyexpat.errors import messages
-from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.core.exceptions import ObjectDoesNotExist
 import json
 from .models import YourItemModel
-from .utils import user_based_collaborative_filtering
+from .utils import recommend_with_algorithm
 from .form import ReviewForm
 from .models import Staff, Items, Testimonial, Booking, Contact, OrderItem, Customer, Order, ShippingAddress, ReviewRating
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.core.mail import send_mail
 from django.http import JsonResponse
-import json
 import datetime
 
 # Create views here.
@@ -80,11 +78,14 @@ def staff_page(request):
     return render(request, "staff-page.html", context)
 
 @login_required(login_url='login')
-def recommend_items(request):
-    recommendations = user_based_collaborative_filtering(request.user)
-    context = {"recommendations": recommendations}
-    return render(request, 'recommend_items.html', context)
+def recommend_view(request):
+    user_id = request.user.id
+    recommended_items = recommend_with_algorithm(user_id)
+    print(recommended_items)
+    return render(request, 'recommend_items.html', {'recommendations': recommended_items})
 
+def thanks_view(request):
+    return render(request, 'thanks.html')
 
 def menu(request):
     context = {
@@ -274,6 +275,8 @@ def process_order(request):
             c = json.loads(request.COOKIES['cart'])
         except:
             c = {}
+            items = []
+            total=0
         o = {"get_cart_items": 0, "get_cart_total": 0}
         cart_items = 0
         items = []
@@ -302,11 +305,11 @@ def process_order(request):
             order = Order.objects.create(customer=customer, complete=False)
             for item in items:
                 product = Items.objects.get(id=item['product']['id'])
-                order_item = OrderItem.objects.create(product=product, order=order, quantity=item['quantity'])
+                OrderItem.objects.create(product=product, order=order, quantity=item['quantity'])
 
     total = float(data['form']['total'])
     order.transaction_id = transaction_id
-
+    payment_method = data['form'].get('payment_method', 'paypal')
     if total == order.get_cart_total:
         order.complete = True
     order.save()
@@ -321,8 +324,12 @@ def process_order(request):
             zipcode=data['shipping']['zipcode']
         )
 
+    if payment_method == 'cod':
+        order.payment_status = 'COD'
+        order.save()
+
     return JsonResponse({
-        "message": "Payment Complete"
+        "message": "Payment Complete" if payment_method != 'cod' else "Order Placed. Pay on Delivery"
     })
 
 

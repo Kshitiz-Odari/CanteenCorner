@@ -1,44 +1,63 @@
-from django.db.models import Count, Avg
-from .models import ReviewRating, Items
-
-def user_based_collaborative_filtering(target_user):
-    target_user_ratings = ReviewRating.objects.filter(user=target_user)
-
-    # Return an empoty list if the user has no ratings
-    if not target_user_ratings.exists():
-        return []
-
-    # Find similar users who have rated at least one common item highly, and have at least 2 common high-rated items
-    similar_users = (
-        ReviewRating.objects
-        .exclude(user=target_user)
-        .filter(item__in=target_user_ratings.values('item'), rating__gte=3)
-        .values('user')
-        .annotate(common_items=Count('item'))
-        .filter(common_items__gte=2)
-        .order_by('-common_items')
-    )
-
-    similar_user_ids = [user['user'] for user in similar_users]
-
-    # If no similar users are found, return empty
-    if not similar_user_ids:
-        return []
-
-    # Get items rated by similar users with high ratings, excluding items already rated by the target user
-    items_rated_by_similar_users = (
-        Items.objects
-        .filter(ratings__user__in=similar_user_ids, ratings__rating__gte=4)
-        .exclude(ratings__user=target_user)
-        .annotate(avg_rating=Avg('ratings__rating'))
-        .order_by('-avg_rating')
-        .distinct()
-    )
-
-    recommended_items = items_rated_by_similar_users[:10]
+from .models import Items  # Import the Items model from your Django app
+import sqlite3
+import pandas as pd
+from surprise import Dataset, Reader, SVD
+from surprise import accuracy
+import math
 
 
-    print("Similar Users:", similar_user_ids)
-    print("Recommended Items:", [item.name for item in recommended_items])
+def round_up_to_three_decimal_places(num):
+    return math.ceil(num * 1000) / 1000
 
-    return recommended_items
+
+def recommend_with_algorithm(target_user_id):
+
+    connection = sqlite3.connect('E:/Restro&Bar/db.sqlite3')
+    cursor = connection.cursor()
+
+
+    cursor.execute("SELECT user_id, item_id, rating FROM home_reviewrating")
+    data = cursor.fetchall()
+
+    df = pd.DataFrame(data, columns=['user_id', 'item_id', 'rating'])
+
+
+    reader = Reader(rating_scale=(0, 5))
+    data = Dataset.load_from_df(df[['user_id', 'item_id', 'rating']], reader)
+
+    trainset = data.build_full_trainset()
+    algo = SVD()
+
+    algo.fit(trainset)
+
+    predictions = algo.test(trainset.build_testset())
+    rmse = accuracy.rmse(predictions)
+    print(f"RMSE on the training set: {rmse}")
+
+    user_rated_items = df[df['user_id'] == target_user_id]['item_id'].unique()
+    recommendations = []
+
+    items = Items.objects.all()
+
+
+    for item in items:
+        item_id = item.id
+        item_name = item.name
+        item_image = item.image.url if item.image else '{% static "default_image.png" %}'
+
+        if item_id not in user_rated_items:
+            predicted_rating = algo.predict(target_user_id, item_id).est
+            rounded_rating = round_up_to_three_decimal_places(predicted_rating)
+            recommendations.append({
+                'name': item_name,
+                'image': item_image,
+                'price': item.price,
+                'predicted_rating': rounded_rating,
+            })
+
+    recommendations.sort(key=lambda x: x['predicted_rating'], reverse=True)
+
+
+    connection.close()
+
+    return recommendations[:8]

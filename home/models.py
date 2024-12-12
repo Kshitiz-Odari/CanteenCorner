@@ -5,6 +5,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 
+
 GENDER_CHOICES = (
     ('Male', 'Male'),
     ('Female', 'Female'),
@@ -61,7 +62,7 @@ class ReviewRating(models.Model):
             raise ValidationError('Rating must be between 0.5 and 5.0.')
 
 class Customer(models.Model):
-    user = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, default=1)
     name = models.CharField(max_length=20)
     address = models.CharField(max_length=50)
     email = models.EmailField(max_length=50)

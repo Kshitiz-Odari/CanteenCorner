@@ -1,5 +1,6 @@
 {% extends 'base.html' %} {% block myblock %} {% load static %}
 
+<!-- Hero Section -->
 <div class="container-xxl py-5 bg-dark hero-header mb-5">
   <div class="container text-center my-5 pt-5 pb-4">
     <h1 class="display-3 text-white mb-3 animated slideInDown">
@@ -7,7 +8,7 @@
     </h1>
     <nav aria-label="breadcrumb">
       <ol class="breadcrumb justify-content-center text-uppercase">
-        <li class="breadcrumb-item"><a href="#">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
         <li class="breadcrumb-item"><a href="#">Pages</a></li>
         <li class="breadcrumb-item text-white active" aria-current="page">
           Recommendation
@@ -16,14 +17,17 @@
     </nav>
   </div>
 </div>
+
+<!-- Recommended Items -->
 <div class="container-xxl py-5">
   <div class="container">
     <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
       <h5 class="section-title ff-secondary text-center text-primary fw-normal">
         Food Menu
       </h5>
-      <h1 class="mb-5">Recommended Items</h1>
+      <h1 class="mb-5">Highly Recommended Items</h1>
     </div>
+
     <div class="tab-class text-center wow fadeInUp" data-wow-delay="0.1s">
       <div class="tab-content">
         <div id="tab-1" class="tab-pane fade show p-0 active">
@@ -34,25 +38,26 @@
                 {% if item.image %}
                 <img
                   class="flex-shrink-0 img-fluid rounded"
-                  src="{{ item.image.url }}"
-                  alt=""
+                  src="{{ item.image }}"
+                  alt="{{ item.name }}"
                   style="width: 80px"
                 />
-                {% endif %}
+                {% else %}
+                <img
+                  class="flex-shrink-0 img-fluid rounded"
+                  src="{% static 'default.jpg' %}"
+                  <!--
+                  Placeholder
+                  image
+                  --
+                />
+                alt="No image available" style="width: 80px" /> {% endif %}
                 <div class="w-100 d-flex flex-column text-start ps-4">
                   <h5 class="d-flex justify-content-between border-bottom pb-2">
                     <span>{{ item.name }}</span>
-                    <span class="text-primary"
-                      >Rs.{{ item.price|floatformat:2 }}</span
-                    >
+                    <span class="text-primary"> Rs. {{ item.price }} </span>
                   </h5>
-                  <button
-                    data-product="{{ item.id }}"
-                    data-action="add"
-                    class="btn btn-outline-secondary add-btn update-cart"
-                  >
-                    Place an order
-                  </button>
+                  <p>Overall Rating: {{ item.predicted_rating}}</p>
                 </div>
               </div>
             </div>
@@ -63,4 +68,5 @@
     </div>
   </div>
 </div>
+
 {% endblock %}
